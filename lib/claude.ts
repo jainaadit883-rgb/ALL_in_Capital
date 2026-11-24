@@ -1,30 +1,31 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-let client: Anthropic | null = null;
+let client: GoogleGenerativeAI | null = null;
 
-export function getClient(): Anthropic {
+function getClient(): GoogleGenerativeAI {
   if (!client) {
-    client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    client = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
   }
   return client;
 }
 
 export async function ask(prompt: string, systemPrompt?: string): Promise<string> {
-  const c = getClient();
-  const messages: Anthropic.MessageParam[] = [{ role: "user", content: prompt }];
-  const response = await c.messages.create({
-    model: "claude-opus-4-5",
-    max_tokens: 4096,
-    system: systemPrompt,
-    messages,
+  const model = getClient().getGenerativeModel({
+    model: "gemini-2.0-flash",
+    systemInstruction: systemPrompt,
   });
-  const block = response.content[0];
-  return block.type === "text" ? block.text : "";
+  const result = await model.generateContent(prompt);
+  return result.response.text();
 }
 
 export async function askJson<T>(prompt: string, systemPrompt?: string): Promise<T> {
-  const fullSystem = (systemPrompt || "") + "\n\nRespond ONLY with valid JSON. No markdown fences, no explanation.";
-  const raw = await ask(prompt, fullSystem);
+  const model = getClient().getGenerativeModel({
+    model: "gemini-2.0-flash",
+    systemInstruction: (systemPrompt || "") + "\n\nRespond ONLY with valid JSON. No markdown fences, no explanation.",
+    generationConfig: { responseMimeType: "application/json" },
+  });
+  const result = await model.generateContent(prompt);
+  const raw = result.response.text().trim();
   const cleaned = raw.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/\s*```$/i, "").trim();
   return JSON.parse(cleaned) as T;
 }

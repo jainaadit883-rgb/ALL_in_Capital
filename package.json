@@ -9,7 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^1.13.0",
+    "@google/generative-ai": "^0.24.1",
     "@tavily/core": "^1.1.0",
     "ai": "^7.0.181",
     "better-sqlite3": "^13.2.0",
