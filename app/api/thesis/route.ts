@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+export const maxDuration = 60;
 import { getOrInitThesis, reconstructThesis } from "@/lib/thesis";
 import { upsertThesisCriterion, getThesisCriteria } from "@/lib/db";
 import { v4 as uuidv4 } from "uuid";

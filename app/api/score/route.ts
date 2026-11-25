@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+export const maxDuration = 60;
 import { getApplication, getResearchForApplication } from "@/lib/db";
 import { scoreApplication } from "@/lib/scoring";
 import { Application, ResearchResult } from "@/lib/types";
