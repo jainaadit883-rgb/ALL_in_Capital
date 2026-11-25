@@ -11,7 +11,7 @@ function getClient(): GoogleGenerativeAI {
 
 export async function ask(prompt: string, systemPrompt?: string): Promise<string> {
   const model = getClient().getGenerativeModel({
-    model: "gemini-2.5-flash",
+    model: "gemini-3.8-flash",
     systemInstruction: systemPrompt,
   });
   const result = await model.generateContent(prompt);
@@ -20,7 +20,7 @@ export async function ask(prompt: string, systemPrompt?: string): Promise<string
 
 export async function askJson<T>(prompt: string, systemPrompt?: string): Promise<T> {
   const model = getClient().getGenerativeModel({
-    model: "gemini-2.5-flash",
+    model: "gemini-3.8-flash",
     systemInstruction: (systemPrompt || "") + "\n\nRespond ONLY with valid JSON. No markdown fences, no explanation.",
     generationConfig: { responseMimeType: "application/json" },
   });
