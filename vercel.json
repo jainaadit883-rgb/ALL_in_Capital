@@ -1,0 +1,8 @@
+{
+  "functions": {
+    "app/api/score/route.ts": { "maxDuration": 60 },
+    "app/api/research/route.ts": { "maxDuration": 60 },
+    "app/api/thesis/route.ts": { "maxDuration": 60 },
+    "app/api/backtest/route.ts": { "maxDuration": 60 }
+  }
+}
