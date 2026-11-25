@@ -18,10 +18,12 @@ export default function ApplicationsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/applications")
-      .then((r) => r.json())
-      .then((d) => setApps(d.applications || []))
-      .finally(() => setLoading(false));
+    // Load from localStorage (primary) since DB is not persistent on serverless
+    try {
+      const stored = JSON.parse(localStorage.getItem("allin_apps") || "[]");
+      setApps(stored);
+    } catch {}
+    setLoading(false);
   }, []);
 
   return (

@@ -29,7 +29,13 @@ export default function NewApplication() {
     setError("");
     const res = await fetch("/api/applications", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
     const data = await res.json();
-    if (!res.ok) { setError(data.error); setSubmitting(false); return; }
+    if (!res.ok) { setError(data.error || "Failed to create application"); setSubmitting(false); return; }
+    // Save full application to localStorage so detail page works across serverless instances
+    const appRecord = { ...form, id: data.id, submitted_at: new Date().toISOString(), status: "pending" };
+    try {
+      const existing = JSON.parse(localStorage.getItem("allin_apps") || "[]");
+      localStorage.setItem("allin_apps", JSON.stringify([appRecord, ...existing]));
+    } catch {}
     router.push(`/applications/${data.id}`);
   };
 

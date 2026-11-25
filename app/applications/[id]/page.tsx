@@ -43,7 +43,16 @@ function ApplicationDetail() {
     fetch(`/api/applications/${id}`)
       .then((r) => r.json())
       .then((d) => {
-        setApp(d.application as Application);
+        if (d.application) {
+          setApp(d.application as Application);
+        } else {
+          // Fallback: load from localStorage (DB not available on serverless)
+          try {
+            const stored = JSON.parse(localStorage.getItem("allin_apps") || "[]");
+            const found = stored.find((a: Application) => a.id === id);
+            if (found) setApp(found);
+          } catch {}
+        }
         if (d.scores?.overall) setOverall(d.scores.overall as OverallScore);
         if (d.scores?.criteria) {
           const raw = d.scores.criteria as Array<Record<string, unknown>>;
@@ -61,14 +70,14 @@ function ApplicationDetail() {
 
   const runResearch = async () => {
     setRunning("research");
-    await fetch("/api/research", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ application_id: id }) });
+    await fetch("/api/research", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ application_id: id, application: app }) });
     load();
     setRunning("");
   };
 
   const runScore = async () => {
     setRunning("score");
-    await fetch("/api/score", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ application_id: id }) });
+    await fetch("/api/score", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ application_id: id, application: app, research }) });
     load();
     setRunning("");
   };

@@ -121,5 +121,9 @@ export async function reconstructThesis(): Promise<ThesisCriterion[]> {
 export async function getOrInitThesis(): Promise<ThesisCriterion[]> {
   const existing = getThesisCriteria() as ThesisCriterion[];
   if (existing.length > 0) return existing;
-  return reconstructThesis();
+  // Seed from hardcoded criteria only — no Gemini call, keeps scoring fast
+  for (const criterion of SEED_THESIS) {
+    upsertThesisCriterion({ id: uuidv4(), ...criterion });
+  }
+  return getThesisCriteria() as ThesisCriterion[];
 }

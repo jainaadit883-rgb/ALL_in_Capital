@@ -6,10 +6,11 @@ import { Application } from "@/lib/types";
 
 export async function POST(req: NextRequest) {
   try {
-    const { application_id } = await req.json();
+    const body = await req.json();
+    const { application_id, application: inlineApp } = body;
     if (!application_id) return NextResponse.json({ error: "application_id required" }, { status: 400 });
 
-    const app = getApplication(application_id) as Application | undefined;
+    const app = (inlineApp as Application) ?? (getApplication(application_id) as Application | undefined);
     if (!app) return NextResponse.json({ error: "Application not found" }, { status: 404 });
 
     const result = await researchApplication(app);
