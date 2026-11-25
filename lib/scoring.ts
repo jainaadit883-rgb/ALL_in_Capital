@@ -1,13 +1,13 @@
 import { v4 as uuidv4 } from "uuid";
 import { askJson } from "./claude";
 import {
-  getThesisCriteria,
   insertCriterionScores,
   insertOverallScore,
   getScoresForApplication,
   getCorrectionsForCriterion,
   updateApplicationStatus,
 } from "./db";
+import { getOrInitThesis } from "./thesis";
 import { Application, CriterionScore, OverallScore, Recommendation, ThesisCriterion } from "./types";
 import { ResearchResult } from "./types";
 
@@ -51,8 +51,7 @@ export async function scoreApplication(
     if (overall.memo_text) return { overall, criteria };
   }
 
-  const criteria = getThesisCriteria() as ThesisCriterion[];
-  if (criteria.length === 0) throw new Error("No thesis criteria found. Initialize thesis first.");
+  const criteria = await getOrInitThesis() as ThesisCriterion[];
 
   updateApplicationStatus(app.id, "scoring");
 
