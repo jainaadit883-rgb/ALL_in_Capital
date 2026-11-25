@@ -4,6 +4,8 @@ import fs from "fs";
 
 const DB_PATH = process.env.DATABASE_PATH
   ? path.resolve(process.env.DATABASE_PATH)
+  : process.env.VERCEL
+  ? "/tmp/allin.db"
   : path.resolve("./data/allin.db");
 
 let db: Database.Database | null = null;
